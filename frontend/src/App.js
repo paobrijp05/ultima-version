@@ -50,7 +50,7 @@ function App() {
 
   const handleSaveConstants = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/guardar_constantes', {
+      const response = await fetch('https://ultima-version.onrender.com/api/guardar_constantes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ function App() {
 
   const handleSubmitCuartil = async (index) => {
     try {
-      const response = await fetch('http://localhost:5000/api/optimizar', {
+      const response = await fetch('https://ultima-version.onrender.com/api/optimizar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
