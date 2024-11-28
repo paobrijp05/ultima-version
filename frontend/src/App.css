@@ -1,0 +1,183 @@
+/* Estilo general */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8f9fa; /* Light pastel gray */
+  margin: 0;
+  padding: 0;
+  color: #343a40; /* Dark gray for text */
+  line-height: 1.6;
+}
+
+/* Contenedor principal */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Encabezado */
+.header {
+  background-color: #a8dadc; /* Light pastel teal */
+  color: #1d3557; /* Dark blue for text */
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2.5em;
+}
+
+.header p {
+  font-size: 1.2em;
+  margin: 10px 0 0;
+}
+
+/* Formularios */
+.form,
+.form-section {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px 0;
+  text-align: left;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.form h2,
+.form-section h2 {
+  margin-top: 0;
+  color: #457b9d; /* Medium blue for text */
+  text-align: center;
+}
+
+/* Inputs */
+.input {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: #457b9d; /* Medium blue for text */
+  outline: none;
+}
+
+/* Botones */
+.button {
+  background-color: #a8dadc; /* Light pastel teal */
+  color: #1d3557; /* Dark blue for text */
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.button:hover {
+  background-color: #90c9d0; /* Slightly darker pastel teal */
+}
+
+.button:active {
+  background-color: #78b8c4; /* Even darker pastel teal */
+}
+
+/* Contenedor principal para entrada y resultados */
+.container {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Estilos para la sección de entrada */
+.entrada {
+  flex: 1;
+  margin-right: 20px;
+}
+
+/* Estilos para la sección de resultados */
+.resultados {
+  flex: 1;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f1faee; /* Very light pastel green */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.resultado-item {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f1faee; /* Very light pastel green */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.resultado-item h3 {
+  margin-top: 0;
+  color: #1d3557; /* Dark blue for text */
+  font-size: 1.5em;
+  border-bottom: 2px solid #457b9d; /* Medium blue for text */
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.resultado-item pre {
+  background-color: #fefae0; /* Light pastel yellow */
+  padding: 15px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 1em;
+  line-height: 1.6;
+  white-space: pre-wrap; /* Wrap text */
+  color: #343a40; /* Dark gray for text */
+}
+
+.resultado-item p {
+  margin: 10px 0;
+  color: #606c38; /* Olive green for text */
+  font-size: 1.1em;
+}
+
+.resultado-item p strong {
+  color: #457b9d; /* Medium blue for text */
+  font-weight: bold;
+}
+
+.resultado-item .section-title {
+  font-size: 1.2em;
+  color: #1d3557; /* Dark blue for text */
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #457b9d; /* Medium blue for text */
+  padding-bottom: 5px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .resultado-item {
+    padding: 10px;
+  }
+
+  .resultado-item h3 {
+    font-size: 1em;
+  }
+
+  .resultado-item pre {
+    font-size: 0.8em;
+  }
+}
