@@ -44,7 +44,7 @@ function App() {
 
   const handleSaveConstants = async () => {
     try {
-      const response = await fetch('https://ultima-version-19.onrender.com/api/guardar_constantes', {
+      const response = await fetch('https://ultima-version.onrender.com/api/guardar_constantes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ function App() {
 
   const handleGuardarPronosticos = async () => {
     try {
-      const response = await fetch('https://ultima-version-19.onrender.com/api/guardar_pronosticos', {
+      const response = await fetch('https://ultima-version.onrender.com/api/optimizar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
