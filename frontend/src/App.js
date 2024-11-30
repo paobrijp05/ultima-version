@@ -75,7 +75,7 @@ function App() {
 
   const handleGuardarPronosticos = async () => {
     try {
-      const response = await fetch('https://ultima-version.onrender.com/api/optimizar', {
+      const response = await fetch('https://ultima-version.onrender.com/api/guardar_pronosticos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ function App() {
         demanda_pronosticada: demandaPronosticada
       };
       
-      const response = await fetch('http://127.0.0.1:5000/api/optimizar', {
+      const response = await fetch('https://ultima-version.onrender.com/api/optimizar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
