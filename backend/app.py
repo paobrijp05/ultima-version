@@ -12,6 +12,7 @@ cuartiles = []
 inventario_actual = 0
 backorder_actual = 0
 trabajadores_actuales = 0
+pronosticos = []
 
 @app.route('/api/guardar_constantes', methods=['POST'])
 def guardar_constantes():
@@ -32,14 +33,24 @@ def guardar_constantes():
     except Exception as e:
         return jsonify({"message": f"Error inesperado: {str(e)}"}), 500
 
-    return jsonify({"message": "Constantes guardadas correctamente"})
+    return jsonify({})
+
+@app.route('/api/guardar_pronosticos', methods=['POST'])
+def guardar_pronosticos():
+    global pronosticos
+    try:
+        pronosticos = request.json
+        return jsonify({"message": "Pronósticos guardados correctamente"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"}), 400
 
 @app.route('/api/optimizar', methods=['POST'])
 def optimizar():
-    global constantes, inventario_actual, backorder_actual, trabajadores_actuales, cuartiles
+    global constantes, inventario_actual, backorder_actual, trabajadores_actuales, cuartiles, pronosticos
     data = request.json
-    cuartil = data['cuartil']
+    cuartil = data['nombre']
     demanda_real = float(data['demanda_real'])
+    demanda_pronosticada = float(data.get('demanda_pronosticada', 0))
 
     # Optimización
     resultado = optimizar_desde_api(

@@ -26,31 +26,25 @@ function App() {
   });
 
   const [cuartiles, setCuartiles] = useState([]);
+  const [pronosticos, setPronosticos] = useState([]);
   const [numCuartiles, setNumCuartiles] = useState('');
   const [resultados, setResultados] = useState([]);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [step, setStep] = useState(1);
   const [constantsSaved, setConstantsSaved] = useState(false);
+  const [pronosticosSaved, setPronosticosSaved] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Validar que solo se ingresen números y punto decimal
     if (/^\d*\.?\d*$/.test(value)) {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  const handleCuartilChange = (e, index) => {
-    const { name, value } = e.target;
-    const newCuartiles = [...cuartiles];
-    newCuartiles[index] = { ...newCuartiles[index], [name]: value };
-    setCuartiles(newCuartiles);
-  };
-
   const handleSaveConstants = async () => {
     try {
-      const response = await fetch('https://ultima-version.onrender.com/api/guardar_constantes', {
+      const response = await fetch('https://ultima-version-19.onrender.com/api/guardar_constantes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +53,6 @@ function App() {
       });
       const result = await response.json();
       if (response.ok) {
-        setMessage(result.message);
         setConstantsSaved(true);
         setStep(2);
       } else {
@@ -71,24 +64,63 @@ function App() {
   };
 
   const handleSaveCuartiles = () => {
-    const cuartilesArray = Array.from({ length: numCuartiles }, () => ({ cuartil: '', demanda_real: '' }));
+    const cuartilesArray = Array.from({ length: parseInt(numCuartiles) }, () => ({
+      nombre: '',
+      demanda_pronosticada: ''
+    }));
     setCuartiles(cuartilesArray);
     setStep(3);
     setError(null);
   };
 
-  const handleSubmitCuartil = async (index) => {
+  const handleGuardarPronosticos = async () => {
     try {
-      const response = await fetch('https://ultima-version.onrender.com/api/optimizar', {
+      const response = await fetch('https://ultima-version-19.onrender.com/api/guardar_pronosticos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(cuartiles[index]),
+        body: JSON.stringify(cuartiles),
       });
       const result = await response.json();
       if (response.ok) {
-        setResultados([...resultados, result.resultado]);
+        setMessage('Datos guardados exitosamente');
+        setPronosticosSaved(true);
+        setPronosticos([...cuartiles]);
+        // Reset cuartiles for real demand
+        const newCuartiles = cuartiles.map(c => ({
+          nombre: c.nombre,
+          demanda_real: ''
+        }));
+        setCuartiles(newCuartiles);
+      } else {
+        setError(result.message);
+      }
+    } catch (error) {
+      setError(`Error al guardar pronósticos: ${error.message}`);
+    }
+  };
+
+  const handleSubmitCuartil = async (index, demandaPronosticada) => {
+    try {
+      const cuartilData = {
+        ...cuartiles[index],
+        demanda_pronosticada: demandaPronosticada
+      };
+      
+      const response = await fetch('http://127.0.0.1:5000/api/optimizar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cuartilData),
+      });
+      
+      const result = await response.json();
+      if (response.ok) {
+        const newResultados = [...resultados];
+        newResultados[index] = result.resultado;
+        setResultados(newResultados);
       } else {
         setError(result.message);
       }
@@ -129,7 +161,7 @@ function App() {
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       const cuartilData = [
-        ['Nombre del cuartil', cuartil.cuartil],
+        ['Nombre del cuartil', cuartil.nombre], // Fix the key to access the cuartil name
         ['Demanda real', cuartil.demanda_real]
       ];
       if (resultados[index]) {
@@ -201,50 +233,97 @@ function App() {
             {error && <div className="error-message">{error}</div>}
           </div>
         )}
-        {step === 3 &&
-          cuartiles.map((cuartil, index) => (
-            <div key={index} className="form-section">
-              <h3>Cuartil {index + 1}</h3>
-              <label>
-                Nombre del cuartil:
-                <input
-                  type="text"
-                  name="cuartil"
-                  value={cuartil.cuartil}
-                  onChange={(e) => handleCuartilChange(e, index)}
-                  className="input"
-                />
-              </label>
-              <label>
-                Demanda real:
-                <input
-                  type="text"
-                  name="demanda_real"
-                  value={cuartil.demanda_real}
-                  onChange={(e) => {
-                    if (/^\d*\.?\d*$/.test(e.target.value)) {
-                      handleCuartilChange(e, index);
-                    }
-                  }}
-                  className="input"
-                />
-              </label>
-              <button onClick={() => handleSubmitCuartil(index)} className="button">
-                Enviar Cuartil
-              </button>
-              {resultados[index] && (
-                <div className="resultado-item">
-                  <h3>Resultado del Cuartil {index + 1}</h3>
-                  <pre>{resultados[index]}</pre>
-                </div>
-              )}
-            </div>
-          ))}
-        {step === 3 && (
+        {step === 3 && !pronosticosSaved && (
           <div className="form-section">
-            <button onClick={generatePDF} className="button">
-              Descargar Reporte
+            <h2>Ingrese Pronósticos</h2>
+            {cuartiles.map((cuartil, index) => (
+              <div key={index}>
+                <h3>Cuartil {index + 1}</h3>
+                <label>
+                  Nombre del cuartil:
+                  <input
+                    type="text"
+                    value={cuartil.nombre}
+                    onChange={(e) => {
+                      const newCuartiles = [...cuartiles];
+                      newCuartiles[index] = {
+                        ...newCuartiles[index],
+                        nombre: e.target.value
+                      };
+                      setCuartiles(newCuartiles);
+                    }}
+                    className="input"
+                  />
+                </label>
+                <label>
+                  Demanda pronosticada:
+                  <input
+                    type="text"
+                    value={cuartil.demanda_pronosticada}
+                    onChange={(e) => {
+                      if (/^\d*\.?\d*$/.test(e.target.value)) {
+                        const newCuartiles = [...cuartiles];
+                        newCuartiles[index] = {
+                          ...newCuartiles[index],
+                          demanda_pronosticada: e.target.value
+                        };
+                        setCuartiles(newCuartiles);
+                      }
+                    }}
+                    className="input"
+                  />
+                </label>
+              </div>
+            ))}
+            <button onClick={handleGuardarPronosticos} className="button">
+              Guardar Pronósticos
             </button>
+            {message && <div className="success-message">{message}</div>}
+            {error && <div className="error-message">{error}</div>}
+          </div>
+        )}
+        {step === 3 && pronosticosSaved && (
+          <div className="form-section">
+            <h2>Ingrese Demanda Real</h2>
+            {cuartiles.map((cuartil, index) => (
+              <div key={index} className="form-section">
+                <h3>Cuartil {cuartiles[index].nombre}</h3>
+                <label>
+                  Demanda real:
+                  <input
+                    type="text"
+                    value={cuartil.demanda_real}
+                    onChange={(e) => {
+                      if (/^\d*\.?\d*$/.test(e.target.value)) {
+                        const newCuartiles = [...cuartiles];
+                        newCuartiles[index].demanda_real = e.target.value;
+                        setCuartiles(newCuartiles);
+                      }
+                    }}
+                    className="input"
+                  />
+                </label>
+                <button 
+                  onClick={() => handleSubmitCuartil(index, pronosticos[index].demanda_pronosticada)} 
+                  className="button"
+                >
+                  Enviar Cuartil
+                </button>
+                {resultados[index] && (
+                  <div className="resultado-item">
+                    <h3>Resultado del Cuartil {cuartil.nombre}</h3>
+                    <pre>{resultados[index]}</pre>
+                  </div>
+                )}
+              </div>
+            ))}
+            {resultados.length === cuartiles.length && (
+              <div className="form-section">
+                <button onClick={generatePDF} className="button">
+                  Descargar Reporte
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
